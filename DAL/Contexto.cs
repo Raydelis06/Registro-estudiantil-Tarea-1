@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Registro_estudiantil___Tarea_1.Models;
 
-namespace Registro_estudiantil___Tarea_1.Components.DAL
+namespace Registro_estudiantil___Tarea_1.DAL
 {
     public class Contexto : DbContext
     {
@@ -8,6 +9,6 @@ namespace Registro_estudiantil___Tarea_1.Components.DAL
         {
         }
 
-        public DbSet<Models.Estudiantes> Estudiantes { get; set; }
+        public DbSet<Estudiantes> Estudiantes { get; set; }
     }
 }

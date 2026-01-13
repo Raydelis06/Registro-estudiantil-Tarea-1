@@ -4,7 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Registro_estudiantil___Tarea_1.Components;
-using Registro_estudiantil___Tarea_1.Components.DAL;
+using Registro_estudiantil___Tarea_1.DAL;
+using Registro_estudiantil___Tarea_1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,8 @@ builder.Services.AddRazorComponents()
 var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 //Inyectar el contexto
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
-
+//Inyectar el servicio
+builder.Services.AddScoped<EstudianteService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

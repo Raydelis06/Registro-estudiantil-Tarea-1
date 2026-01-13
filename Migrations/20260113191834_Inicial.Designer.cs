@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Registro_estudiantil___Tarea_1.Components.DAL;
+using Registro_estudiantil___Tarea_1.DAL;
 
 #nullable disable
 
