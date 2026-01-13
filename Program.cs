@@ -1,10 +1,21 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Registro_estudiantil___Tarea_1.Components;
+using Registro_estudiantil___Tarea_1.Components.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+//Obtener cadena de conexion
+var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+//Inyectar el contexto
+builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 
 var app = builder.Build();
 
