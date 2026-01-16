@@ -5,6 +5,10 @@ namespace Registro_estudiantil___Tarea_1.Models
 {
     public class Estudiantes
     {
+        public Estudiantes()
+        {
+        }
+
         [Key]
         public int EstudianteId { get; set; }
 

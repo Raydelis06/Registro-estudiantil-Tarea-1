@@ -1,5 +1,42 @@
-﻿<h3>EstudianteCreate</h3>
+﻿@page "/Estudiantes/Index/Create"
 
-@code {
+@rendermode InteractiveServer
 
+@inject EstudianteService estudiantesService
+@inject NavigationManager navigationManager
+
+<PageTitle>Crear Estudiante</PageTitle>
+
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+            <h5 class="card-title">Crear Estudiante</h5>
+            <a href="/Estudiantes/Index" class="btn-secondary">
+                <span class="bi bi-plus-square mt-3"></span> Volver al listado
+            </a>
+        </div>
+
+        <div class="card-body mb-3 d-flex justify-content-end">
+            <label>Nombre completo: </label>
+            <InputText id="inputNombre" class="form-control"
+                       @bind-Value="estudiante.Nombres"
+                       placeholder="Ingrese el nombre del estudiante..." />
+            <button type="button" class="btn btn-success px-4" @onclick="Insertar"> Crear </button>
+           
+        </div>
+    </div>
+</div> 
+
+@code{
+    Estudiantes estudiante = new Estudiantes();
+
+    private async Task Insertar()
+    {
+        await estudiantesService.Insertar(estudiante);
+        estudiante.Nombres = string.Empty;
+        Console.WriteLine("Creando estudiante...");
+
+        navigationManager.NavigateTo("/Estudiantes/Index");
+    }
 }
