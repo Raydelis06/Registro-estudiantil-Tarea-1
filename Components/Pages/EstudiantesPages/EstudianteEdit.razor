@@ -1,5 +1,73 @@
-﻿<h3>EstudianteEdit</h3>
+﻿@page "/Estudiantes/Index/Edit/{Id:int}"
 
-@code {
+@rendermode InteractiveServer
 
+@inject EstudianteService estudiantesService
+@inject NavigationManager navigationManager
+
+<PageTitle>Editar informacion del estudiante</PageTitle>
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+            <h5 class="card-title">Editar informacion del estudiante</h5>
+            <a href="/Estudiantes/Index" class="btn btn-secondary">
+                <span class="bi bi-plus-square mt-3"></span> Volver al listado
+            </a>
+        </div>
+
+        <div class="card-body ">
+            <div class="justify-content-start">
+                <label style="font-weight: bold">Nombre actual: </label>
+                <label>@nombreActual </label>
+                <InputText id="inputNombre" class="form-control" style="width: 300px"
+                           @bind-Value="estudiante.Nombres"
+                           placeholder="Ingrese el nuevo nombre..." />
+            </div>
+            <div class ="justify-content-start" >
+                <label style ="font-weight: bold">Direccion actual: </label>
+                <label>@emailActual</label>
+                <InputText id="inputEmail" class="form-control" style="width: 300px"
+                           @bind-Value="estudiante.Email"
+                           placeholder="Ingrese la nueva direccion de correo..." />
+            </div>
+            <p style="color: red">@mensajeError</p>
+        </div>
+        <div class="card-footer justify-content-end">
+            <button type="button" class="btn btn-success px-4" @onclick="Editar"> Guardar cambios</button>
+        </div>
+    </div>
+</div> 
+
+@code{
+    [Parameter]
+    public int Id { get; set; }
+
+    Estudiantes estudiante = new();
+    string mensajeError = string.Empty;
+    string nombreActual;
+    string emailActual;
+
+    protected override async Task OnInitializedAsync()
+    {
+        estudiante = await estudiantesService.Buscar(Id);
+        nombreActual = estudiante.Nombres;
+        emailActual = estudiante.Email;
+    }
+
+    async Task Editar()
+    {
+        if(estudiante.Nombres == string.Empty || estudiante.Email == string.Empty)
+        {
+            mensajeError = "  * todos los campos deben estar llenos";
+            return;
+        }
+        if (!estudiante.Email.Contains("@"))
+        {
+            mensajeError = "  * el correo electronico no es valido";
+            return;
+        }
+        await estudiantesService.Modificar(estudiante);
+        navigationManager.NavigateTo("/Estudiantes/Index");
+    }
 }
