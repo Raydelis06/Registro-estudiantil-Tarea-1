@@ -31,6 +31,13 @@
                            @bind-Value="estudiante.Email"
                            placeholder="Ingrese la nueva direccion de correo..." />
             </div>
+            <div class="justify-content-start">
+                <label style="font-weight: bold">Edad actual: </label>
+                <label>@edadActual</label>
+                <InputNumber step="1" id="inputEdad" class="form-control" style="width: 300px"
+                             @bind-Value="estudiante.Edad"
+                             placeholder="Ingrese la edad actual del estudiante..." />
+            </div>
             <p style="color: red">@mensajeError</p>
         </div>
         <div class="card-footer justify-content-end">
@@ -47,12 +54,14 @@
     string mensajeError = string.Empty;
     string nombreActual;
     string emailActual;
+    int edadActual;
 
     protected override async Task OnInitializedAsync()
     {
         estudiante = await estudiantesService.Buscar(Id);
         nombreActual = estudiante.Nombres;
         emailActual = estudiante.Email;
+        edadActual = estudiante.Edad;
     }
 
     async Task Editar()

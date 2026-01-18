@@ -31,6 +31,7 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Email</th>
+                        <th>Edad</th>
                         <th style="width: 160px;">Acciones</th>
                     </tr>
                 </thead>
@@ -40,6 +41,7 @@
                         <tr>
                             <td>@estudiante.Nombres</td>
                             <td class="text-muted">@estudiante.Email</td>
+                            <td class="text-muted">@estudiante.Edad</td>
                             <td>
                                 <a href="@($"/Estudiantes/Index/Edit/{estudiante.EstudianteId}")" class="btn btn-sm btn-warning" @onclick="() => Editar(estudiante.EstudianteId)" >
                                     <span class="bi bi-pencil-square"></span> Editar

@@ -16,5 +16,7 @@ namespace Registro_estudiantil___Tarea_1.Models
         public string Nombres { get; set; } = string.Empty;
         [Required(ErrorMessage = "Este campo es obligatorio")]
         public string Email { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+        public int Edad { get; set; } = 0;
     }
 }
