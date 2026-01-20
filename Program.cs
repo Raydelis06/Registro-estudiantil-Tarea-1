@@ -13,12 +13,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-//Obtener cadena de conexion
+//Obtener cadena de conexion para la bd local
 var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 //Inyectar el contexto
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 //Inyectar el servicio
 builder.Services.AddScoped<EstudianteService>();
+//Agrega bootstrap
+builder.Services.AddBlazorBootstrap();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

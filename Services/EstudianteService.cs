@@ -42,10 +42,10 @@ namespace Registro_estudiantil___Tarea_1.Services
         //Metodo modificar
         public async Task<bool> Modificar(Estudiantes estudiante)
         {
-            if(estudiante.Nombres == null || estudiante.Email == null)
-            {
-                throw new ArgumentException("Los campos Nombres y Email no pueden ser nulos.");
-            }
+            //if(estudiante.Nombres == null || estudiante.Email == null)
+            //{
+            //    throw new ArgumentException("Los campos Nombres y Email no pueden ser nulos.");
+            //}
             await using var contexto = await DbFactory.CreateDbContextAsync();
             contexto.Update(estudiante);
             Console.WriteLine("Estudiante modificado con exito");

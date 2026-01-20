@@ -12,27 +12,25 @@
         <div class="card-header d-flex justify-content-between align-items-center bg-light">
             <h5 class="card-title">Registro de Estudiantes</h5>
             <div class="d-flex align-items-center gap-2">
-                <InputText id="inputFiltro" class="form-control" style="width: 250px"
+                <InputText id="inputFiltro" class="form-control" 
                            @bind-Value="ValorFiltro"
                            placeholder="Filtro de búsqueda..." />
 
-                <button class="btn btn-primary" @onclick="Buscar"> Buscar </button>
-                <a href="/Estudiantes/Index/Create" class="btn btn-success">
+                <button class="btn btn-outline-primary bi bi me-2" @onclick="Buscar"> Buscar </button>
+                <a href="/Estudiantes/Index/Create" class="btn btn-primary">
                     <span class="bi bi-plus-square mt-3"></span> Crear
                 </a>
             </div>
         </div>
         
-
         <div class="card-body">
-
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>Nombre</th>
                         <th>Email</th>
                         <th>Edad</th>
-                        <th style="width: 160px;">Acciones</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,11 +41,9 @@
                             <td class="text-muted">@estudiante.Email</td>
                             <td class="text-muted">@estudiante.Edad</td>
                             <td>
-                                <a href="@($"/Estudiantes/Index/Edit/{estudiante.EstudianteId}")" class="btn btn-sm btn-warning" @onclick="() => Editar(estudiante.EstudianteId)" >
-                                    <span class="bi bi-pencil-square"></span> Editar
+                                <a href="@($"/Estudiantes/Index/Edit/{estudiante.EstudianteId}")" class="btn btn-sm btn-outline-primary">
+                                    <span class="bi bi-pencil-square"></span> 
                                 </a>
-                                <a class="btn btn-sm btn-danger" @onclick="() => Eliminar(estudiante.EstudianteId)">
-                                <span class="bi bi-info"></span> Eliminar </a>
                             </td>
                         </tr>
                      }
@@ -56,7 +52,7 @@
 
         </div>
 
-        <div class="card-footer d-flex space-between">
+        <div class="card-footer d-flex space-between ">
             <label>Cantidad: @ListaEstudiantes.Count</label>
         </div>
     </div>
@@ -88,18 +84,6 @@
             ListaEstudiantes = await estudiantesService.Listar(
                 criterio: p => p.EstudianteId > 0);
         }
-    }
-
-    private async Task Eliminar(int id)
-    {
-        Console.WriteLine("Eliminando estudiante...");
-        await estudiantesService.Eliminar(id);
-        await Buscar();
-    }
-    private async Task Editar(int id)
-    {
-        Console.WriteLine("Editando estudiante...");
-        navigationManager.NavigateTo($"/Estudiantes/Index/Edit/{id}");
     }
 }
 

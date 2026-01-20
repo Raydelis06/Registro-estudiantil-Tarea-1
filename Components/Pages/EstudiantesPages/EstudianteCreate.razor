@@ -8,60 +8,54 @@
 <PageTitle>Crear Estudiante</PageTitle>
 
 
-<div class="container mt-4">
+<div class="container w-75 mt-4">
     <div class="card shadow-lg border-0">
         <div class="card-header d-flex justify-content-between align-items-center bg-light">
             <h5 class="card-title">Crear Estudiante</h5>
-            <a href="/Estudiantes/Index" class="btn btn-secondary">
-                <span class="bi bi-plus-square mt-3"></span> Volver al listado
-            </a>
         </div>
-
-        <div class="card-body">
-            <div class="justify-content-start">
-                <label style="font-weight: bold">Nombre completo: </label>
-                <InputText id="inputNombre" class="form-control " style="width: 300px"
-                           @bind-Value="estudiante.Nombres"
-                           placeholder="Ingrese el nombre del estudiante..." />
+        <EditForm Model="@estudiante" OnValidSubmit="Crear">
+            <DataAnnotationsValidator />
+            <div class="card-body d-flex flex-column gap-3 ">
+                <div class="justify-content-start">
+                    <label>Nombre completo: </label>
+                    <InputText id="inputNombre" class="form-control "
+                               @bind-Value="estudiante.Nombres"
+                               placeholder="Ingrese el nombre del estudiante..." />
+                    <ValidationMessage For="@(() => estudiante.Nombres)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Direccion de correo: </label>
+                    <InputText id="inputEmail" class="form-control"
+                               @bind-Value="estudiante.Email"
+                               placeholder="Ingrese el correo electronico del estudiante..." />
+                    <ValidationMessage For="@(() => estudiante.Email)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Edad: </label>
+                    <InputNumber step="1" id="inputEdad" class="form-control"
+                               @bind-Value="estudiante.Edad"
+                               placeholder="Ingrese la edad actual del estudiante..." />
+                    <ValidationMessage For="@(() => estudiante.Edad)" />
+                </div>
             </div>
-            <div class="justify-content-start">
-                <label style="font-weight: bold">Direccion de correo: </label>
-                <InputText id="inputEmail" class="form-control" style="width: 300px"
-                           @bind-Value="estudiante.Email"
-                           placeholder="Ingrese el correo electronico del estudiante..." />
+            <div class="card-footer d-flex justify-content-center gap-2">
+                <a href="/Estudiantes/Index" class="btn btn-secondary">
+                    <span class="bi bi-arrow-left me-2"></span> Volver
+                </a>
+                <button type="submit" class="btn btn-primary bi bi-save me-2"> Guardar </button>
             </div>
-            <div class="justify-content-start">
-                <label style="font-weight: bold">Edad: </label>
-                <InputNumber step="1" id="inputEdad" class="form-control" style="width: 300px"
-                           @bind-Value="estudiante.Edad"
-                           placeholder="Ingrese la edad actual del estudiante..." />
-            </div>
-
-        </div>
-        <p style="color: red">@mensajeError</p>
-        <div class="card-footer justify-content-end">
-            <button type="button" class="btn btn-success px-4" @onclick="Insertar"> Crear</button>
-        </div>
+        </EditForm>
+        
     </div>
 </div>
 
 @code {
-    Estudiantes estudiante = new Estudiantes();
-    String mensajeError = string.Empty;
 
-    private async Task Insertar()
+    Estudiantes estudiante = new Estudiantes();
+
+    private async Task Crear()
     {
-        if (estudiante.Nombres == string.Empty || estudiante.Email == string.Empty)
-        {
-            mensajeError = "  * todos los campos deben estar llenos";
-            return;
-        }
-        if (!estudiante.Email.Contains("@"))
-        {
-            mensajeError = "  * el correo electronico no es valido";
-            return;
-        }
-        await estudiantesService.Insertar(estudiante);
+        await estudiantesService.Guardar(estudiante);
         Console.WriteLine("Creando estudiante...");
 
         navigationManager.NavigateTo("/Estudiantes/Index");
