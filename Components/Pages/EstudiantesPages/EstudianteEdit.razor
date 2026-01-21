@@ -4,6 +4,7 @@
 
 @inject EstudiantesService estudiantesService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 
 <PageTitle>Editar informacion del estudiante</PageTitle>
 
@@ -45,12 +46,28 @@
                 <a href="/Estudiantes/Index" class="btn btn-secondary">
                     <span class="bi bi-arrow-left me-2"></span> Volver
                 </a>
-                <button type="submit" class="btn btn-primary bi bi-save me-2"> Modificar </button>
-                <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar"> Eliminar </button>
+                <button type="submit" class="btn btn-primary bi bi-save me-2" @onclick="Editar"> Modificar </button>
+                <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar" > Eliminar </button>
             </div>
         </EditForm>
     </div>
 </div> 
+
+@if(toastEsVisible){
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast show text-bg-@mensaje.Type.ToString().ToLower()" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">@mensaje.Title</strong>
+            </div>
+            <div class="toast-body">
+                @mensaje.Message
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-success" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code{
     [Parameter]
@@ -60,6 +77,9 @@
     string nombreActual = string.Empty;
     string emailActual = string.Empty;
     int edadActual;
+    ToastMessage mensaje = new ToastMessage();
+    bool toastEsVisible = false;
+    private double progress;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,17 +89,41 @@
             emailActual = estudiante.Email;
             edadActual = estudiante.Edad!.Value;
         }
-        
+
     }
 
     async Task Editar()
     {
-        await estudiantesService.Modificar(estudiante);
+        var modificado = await estudiantesService.Modificar(estudiante);
+        if(modificado)
+            await mostrarToastProgress("Completado", "El estudiante ha sido editado con exito");
+        else
+            await mostrarToastProgress("Error", "Error al modificar el estudiante.");
         navigationManager.NavigateTo("/Estudiantes/Index");
     }
     async Task Eliminar()
     {
         await estudiantesService.Eliminar(estudiante.EstudianteId);
+        await mostrarToastProgress("Completado", "El estudiante ha sido eliminado con exito");
         navigationManager.NavigateTo("/Estudiantes/Index");
+    }
+    async Task mostrarToastProgress(string titulo, string texto)
+    {
+        progress = 100;
+        toastEsVisible = true;
+        mensaje = toastService.ShowToast(titulo, texto);
+
+        int duration = 3000;
+        int intervalTime = 30;
+        int steps = (int)duration / intervalTime;
+
+        for (int i = 0; i<steps; i++)
+        {
+            await Task.Delay(intervalTime);
+            progress -= 100.0 / steps;
+            StateHasChanged();
+        }
+        toastEsVisible = false;
+        StateHasChanged();
     }
 }

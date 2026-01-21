@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlazorBootstrap;
+using Microsoft.EntityFrameworkCore;
 using Registro_estudiantil___Tarea_1.DAL;
 using Registro_estudiantil___Tarea_1.Models;
 using System.Linq.Expressions;
@@ -17,15 +18,15 @@ namespace Registro_estudiantil___Tarea_1.Services
 
         }
         //Metodo existe
-        public async Task<bool> Existe(int asignaturaId)
+        public async Task<bool> Existe(string asignaturaNombre)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            return await contexto.Asignaturas.AnyAsync(a => a.AsignaturaId == asignaturaId);
+            return await contexto.Asignaturas.AnyAsync(a => a.Nombre == asignaturaNombre);
         }
         //Metodo guardar
         public async Task<bool> Guardar(Asignaturas asignatura)
         {
-            if (!await Existe(asignatura.AsignaturaId))
+            if (!await Existe(asignatura.Nombre))
             {
                 return await Insertar(asignatura);
             }
@@ -45,10 +46,10 @@ namespace Registro_estudiantil___Tarea_1.Services
         }
 
         //Metodo buscar
-        public async Task<Estudiantes?> Buscar(int asignaturaId)
+        public async Task<Asignaturas?> Buscar(int asignaturaId)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            return await contexto.Estudiantes.FirstOrDefaultAsync(e => e.EstudianteId == asignaturaId);
+            return await contexto.Asignaturas.FirstOrDefaultAsync(a => a.AsignaturaId == asignaturaId);
         }
 
         //Metodo eliminar
@@ -56,7 +57,7 @@ namespace Registro_estudiantil___Tarea_1.Services
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
             var estudiante = await contexto.Estudiantes.FindAsync(asignaturaId);
-            return await contexto.Estudiantes.AsNoTracking().Where(e => e.EstudianteId == asignaturaId).ExecuteDeleteAsync() > 0;
+            return await contexto.Asignaturas.AsNoTracking().Where(a => a.AsignaturaId == asignaturaId).ExecuteDeleteAsync() > 0;
         }
         //Metodo listar
         public async Task<List<Asignaturas>> Listar(Expression<Func<Asignaturas, bool>> criterio)

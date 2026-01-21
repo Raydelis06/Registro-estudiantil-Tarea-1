@@ -1,5 +1,108 @@
 ﻿@page "/Asignaturas/Index/Edit/{AsignaturaId:int}"
 
-@code {
+@rendermode InteractiveServer
 
+@inject AsignaturasService asignaturasService
+@inject NavigationManager navigationManager
+
+<PageTitle>Editar informacion de la asignatura</PageTitle>
+
+<div class="container w-75 mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+            <h5 class="card-title">Editar informacion del estudiante</h5>
+        </div>
+
+        <EditForm Model="@asignatura" OnValidSubmit="Editar">
+            <DataAnnotationsValidator />
+            <div class="card-body d-flex flex-column gap-3">
+                <div class="justify-content-start">
+                    <label>Nombre: </label>
+                    <InputText class="form-control" @bind-Value="asignatura.Nombre"
+                               placeholder="nombreActual" />
+                    <ValidationMessage For="@(() => asignatura.Nombre)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Codigo: </label>
+                    <InputText class="form-control"
+                               @bind-Value="asignatura.Codigo"
+                               placeholder="codigoActual" />
+                    <ValidationMessage For="@(() => asignatura.Codigo)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Aula: </label>
+                    <InputText class="form-control"
+                               @bind-Value="asignatura.Aula"
+                               placeholder="aulaActual" />
+                    <ValidationMessage For="@(() => asignatura.Aula)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Cantidad de creditos: </label>
+                    <InputNumber class="form-control"
+                                 @bind-Value="asignatura.Creditos"
+                                 placeholder="creditosActuales" />
+                    <ValidationMessage For="@(() => asignatura.Creditos)" />
+                </div>
+
+            </div>
+            <div class="card-footer d-flex justify-content-center gap-2">
+                <a href="/Estudiantes/Index" class="btn btn-secondary">
+                    <span class="bi bi-arrow-left me-2"></span> Volver
+                </a>
+                <button type="submit" class="btn btn-primary bi bi-save me-2"> Modificar </button>
+                <button type="button" class="btn btn-danger bi bi-trash me-2" data-bs-toggle="modal" data-bs-target="#modalConfirm"> Eliminar </button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConfirm" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-bg-light text-black">
+                <h5 class="modal-title">Alerta de confirmacion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body"> ¿Esta seguro que desa eliminar la asignatura? </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar </button>
+                <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar"> Eliminar </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int AsignaturaId { get; set; }
+
+    Asignaturas asignatura = new();
+    string nombreActual = string.Empty;
+    string codigoActual = string.Empty;
+    string aulaActual = string.Empty;
+    int creditosActuales;
+
+    protected override async Task OnInitializedAsync()
+    {
+        asignatura = await asignaturasService.Buscar(AsignaturaId);
+        if (asignatura != null)
+        {
+            nombreActual = asignatura.Nombre;
+            codigoActual = asignatura.Codigo;
+            aulaActual = asignatura.Aula;
+            creditosActuales = asignatura.Creditos;
+        }
+
+    }
+
+    async Task Editar()
+    {
+        await asignaturasService.Modificar(asignatura);
+        navigationManager.NavigateTo("/Asignaturas/Index");
+    }
+    async Task Eliminar()
+    {
+        await asignaturasService.Eliminar(asignatura.AsignaturaId);
+        navigationManager.NavigateTo("/Asignaturas/Index");
+    }
 }
