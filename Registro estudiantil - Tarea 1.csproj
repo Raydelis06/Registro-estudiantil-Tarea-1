@@ -26,11 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Components\Pages\EstudiantesPages\Consultas\" />
-    <Folder Include="Components\Pages\EstudiantesPages\Registros\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Registro estudiantil - Tarea 1.slnx" />
   </ItemGroup>
 

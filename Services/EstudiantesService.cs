@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Registro_estudiantil___Tarea_1.Services
 {
-    public class EstudianteService(IDbContextFactory<Contexto> DbFactory)
+    public class EstudiantesService(IDbContextFactory<Contexto> DbFactory)
     {
 
         //Metodo insertar
