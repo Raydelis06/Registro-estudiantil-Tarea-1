@@ -67,7 +67,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ListaEstudiantes = await estudiantesService.Listar(criterio: p => p.EstudianteId > 0);
+        try
+        {
+            ListaEstudiantes = await estudiantesService.Listar(criterio: p => p.EstudianteId > 0);
+        }catch(Exception ex)
+        {
+            navigationManager.NavigateTo("/Error");
+        }
     }
 
     private async Task Buscar()

@@ -4,6 +4,7 @@
 
 @inject AsignaturasService asignaturasService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 
 <PageTitle>Editar informacion de la asignatura</PageTitle>
 
@@ -55,7 +56,7 @@
         </EditForm>
     </div>
 </div>
-
+@* Modulo de confirmacion *@
 <div class="modal fade" id="modalConfirm" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -65,13 +66,29 @@
             </div>
             <div class="modal-body"> ¿Esta seguro que desa eliminar la asignatura? </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" > Cancelar </button>
+                <button type="button" class="btn btn-secondary bi bi-x" data-bs-dismiss="modal"> Cancelar </button>
                 <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar"> Eliminar </button>
             </div>
         </div>
     </div>
 </div>
-
+@* Notificacion sucess/error *@
+@if (toastEsVisible)
+{
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast show text-bg-@mensaje.Type.ToString().ToLower()" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">@mensaje.Title</strong>
+            </div>
+            <div class="toast-body">
+                @mensaje.Message
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-success" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 @code {
     [Parameter]
     public int AsignaturaId { get; set; }
@@ -81,6 +98,10 @@
     string codigoActual = string.Empty;
     string aulaActual = string.Empty;
     int creditosActuales;
+    
+    ToastMessage mensaje = new ToastMessage();
+    bool toastEsVisible = false;
+    private double progress;
 
     protected override async Task OnInitializedAsync()
     {
@@ -92,17 +113,43 @@
             aulaActual = asignatura.Aula;
             creditosActuales = asignatura.Creditos;
         }
-
     }
-
     async Task Editar()
     {
-        await asignaturasService.Modificar(asignatura);
-        navigationManager.NavigateTo("/Asignaturas/Index");
+        var modificado = await asignaturasService.Modificar(asignatura);
+        if (modificado){
+            await mostrarToastProgress("Completado", "La asignatura ha sido editada con exito");
+            navigationManager.NavigateTo("/Asignaturas/Index");
+        }else
+            await mostrarToastProgress("Error", "Error al modificar la asignatura");
     }
     async Task Eliminar()
     {
-        await asignaturasService.Eliminar(asignatura.AsignaturaId);
-        navigationManager.NavigateTo("/Asignaturas/Index");
+        var eliminado = await asignaturasService.Eliminar(asignatura.AsignaturaId);
+        if(eliminado){
+            await mostrarToastProgress("Completado", "La asignatura ha sido eliminada con exito");
+            navigationManager.NavigateTo("/Asignaturas/Index");
+        }
+        else
+            await mostrarToastProgress("Error", "Error al eliminar la asignatura");
+    }
+    async Task mostrarToastProgress(string titulo, string texto)
+    {
+        progress = 100;
+        toastEsVisible = true;
+        mensaje = toastService.ShowToast(titulo, texto);
+
+        int duration = 3000;
+        int intervalTime = 30;
+        int steps = (int)duration / intervalTime;
+
+        for (int i = 0; i < steps; i++)
+        {
+            await Task.Delay(intervalTime);
+            progress -= 100.0 / steps;
+            StateHasChanged();
+        }
+        toastEsVisible = false;
+        StateHasChanged();
     }
 }

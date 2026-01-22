@@ -18,24 +18,21 @@
             <DataAnnotationsValidator />
             <div class="card-body d-flex flex-column gap-3">
                 <div class="justify-content-start">
-                    <label>Nombre actual: </label>
-                    <label>@nombreActual </label>
+                    <label>Nombre completo: </label>
                     <InputText id="inputNombre" class="form-control" 
                                @bind-Value="estudiante.Nombres"
                                placeholder="Ingrese el nuevo nombre..." />
                     <ValidationMessage For="@(() => estudiante.Nombres)" />
                 </div>
                 <div class ="justify-content-start" >
-                    <label>Direccion actual: </label>
-                    <label>@emailActual</label>
+                    <label>Correo electronico: </label>
                     <InputText id="inputEmail" class="form-control" 
                                @bind-Value="estudiante.Email"
                                placeholder="Ingrese la nueva direccion de correo..." />
                     <ValidationMessage For="@(() => estudiante.Email)" />
                 </div>
                 <div class="justify-content-start">
-                    <label >Edad actual: </label>
-                    <label>@edadActual</label>
+                    <label >Edad: </label>
                     <InputNumber step="1" id="inputEdad" class="form-control" 
                                  @bind-Value="estudiante.Edad"
                                  placeholder="Ingrese la edad actual del estudiante..." />
@@ -47,13 +44,30 @@
                     <span class="bi bi-arrow-left me-2"></span> Volver
                 </a>
                 <button type="submit" class="btn btn-primary bi bi-save me-2" @onclick="Editar"> Modificar </button>
-                <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar" > Eliminar </button>
+                <button type="button" class="btn btn-danger bi bi-trash me-2" data-bs-toggle="modal" data-bs-target="#modalConfirm"> Eliminar </button>
             </div>
         </EditForm>
     </div>
 </div> 
-
-@if(toastEsVisible){
+@* Modulo de confirmacion *@
+<div class="modal fade" id="modalConfirm" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-bg-light text-black">
+                <h5 class="modal-title">Alerta de confirmacion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body"> ¿Esta seguro que desa eliminar el estudiante? </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary bi bi-x" data-bs-dismiss="modal"> Cancelar </button>
+                <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar"> Eliminar </button>
+            </div>
+        </div>
+    </div>
+</div>
+@* Notificacion sucess/error *@
+@if (toastEsVisible)
+{
     <div class="toast-container position-fixed top-0 end-0 p-3">
         <div class="toast show text-bg-@mensaje.Type.ToString().ToLower()" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
@@ -69,7 +83,7 @@
     </div>
 }
 
-@code{
+@code {
     [Parameter]
     public int Id { get; set; }
 
@@ -84,7 +98,8 @@
     protected override async Task OnInitializedAsync()
     {
         estudiante = await estudiantesService.Buscar(Id);
-        if (estudiante != null){
+        if (estudiante != null)
+        {
             nombreActual = estudiante.Nombres;
             emailActual = estudiante.Email;
             edadActual = estudiante.Edad!.Value;
@@ -95,7 +110,7 @@
     async Task Editar()
     {
         var modificado = await estudiantesService.Modificar(estudiante);
-        if(modificado)
+        if (modificado)
             await mostrarToastProgress("Completado", "El estudiante ha sido editado con exito");
         else
             await mostrarToastProgress("Error", "Error al modificar el estudiante.");
@@ -117,7 +132,7 @@
         int intervalTime = 30;
         int steps = (int)duration / intervalTime;
 
-        for (int i = 0; i<steps; i++)
+        for (int i = 0; i < steps; i++)
         {
             await Task.Delay(intervalTime);
             progress -= 100.0 / steps;

@@ -16,7 +16,7 @@
                            @bind-Value="ValorFiltro"
                            placeholder="Filtro de búsqueda..." />
 
-                <button class="btn btn-outline-primary" @onclick="Buscar"></button>
+                <button class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
                 <a href="/Asignaturas/Index/Create" class="btn btn-primary">
                     <span class="bi bi-plus-square "></span>
                 </a>
@@ -61,7 +61,6 @@
         </div>
     </div>
 </div>
-
 @code {
 
     public List<Asignaturas> ListaAsignatura { get; set; } = new List<Asignaturas>();
@@ -71,7 +70,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ListaAsignatura = await asignaturasService.Listar(criterio: p => p.AsignaturaId > 0);
+        try
+        {
+            ListaAsignatura = await asignaturasService.Listar(criterio: p => p.AsignaturaId > 0);
+        }catch(Exception e)
+        {
+            navigationManager.NavigateTo("/Error");
+        }
     }
 
     private async Task Buscar()

@@ -23,14 +23,23 @@ namespace Registro_estudiantil___Tarea_1.Services
             await using var contexto = await DbFactory.CreateDbContextAsync();
             return await contexto.Asignaturas.AnyAsync(a => a.Nombre == asignaturaNombre);
         }
+        public async Task<bool> Existe(int asignaturaId)
+        {
+            await using var contexto = await DbFactory.CreateDbContextAsync();
+            return await contexto.Asignaturas.AnyAsync(a => a.AsignaturaId == asignaturaId);
+        }
         //Metodo guardar
         public async Task<bool> Guardar(Asignaturas asignatura)
         {
-            if (!await Existe(asignatura.Nombre))
+            if (!await Existe(asignatura.AsignaturaId))//Si no existe por Id
             {
+                if (await Existe(asignatura.Nombre))//Si existe por nombre
+                {
+                    return false;
+                }
                 return await Insertar(asignatura);
             }
-            else
+            else//Si existe por Id
             {
                 return await Modificar(asignatura);
             }

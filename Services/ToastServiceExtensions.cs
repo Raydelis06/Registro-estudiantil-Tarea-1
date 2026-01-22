@@ -1,6 +1,6 @@
 ﻿using BlazorBootstrap;
 
-namespace Registro_estudiantil___Tarea_1.Models
+namespace Registro_estudiantil___Tarea_1.Services
 {
     public static class ToastServiceExtensions
     {

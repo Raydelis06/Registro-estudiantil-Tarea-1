@@ -4,9 +4,9 @@
 
 @inject EstudiantesService estudiantesService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 
 <PageTitle>Crear Estudiante</PageTitle>
-
 
 <div class="container w-75 mt-4">
     <div class="card shadow-lg border-0">
@@ -24,7 +24,7 @@
                     <ValidationMessage For="@(() => estudiante.Nombres)" />
                 </div>
                 <div class="justify-content-start">
-                    <label>Direccion de correo: </label>
+                    <label>Correo electronico: </label>
                     <InputText id="inputEmail" class="form-control"
                                @bind-Value="estudiante.Email"
                                placeholder="Ingrese el correo electronico del estudiante..." />
@@ -45,19 +45,60 @@
                 <button type="submit" class="btn btn-primary bi bi-save me-2"> Guardar </button>
             </div>
         </EditForm>
-        
     </div>
 </div>
-
+@* Notificacion sucess/error *@
+@if (toastEsVisible)
+{
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast show text-bg-@mensaje.Type.ToString().ToLower()" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">@mensaje.Title</strong>
+            </div>
+            <div class="toast-body">
+                @mensaje.Message
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-success" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 @code {
 
     Estudiantes estudiante = new Estudiantes();
+    ToastMessage mensaje = new ToastMessage();
+    bool toastEsVisible = false;
+    private double progress;
 
     private async Task Crear()
     {
-        await estudiantesService.Guardar(estudiante);
-        Console.WriteLine("Creando estudiante...");
+        var creado = await estudiantesService.Guardar(estudiante);
+        if (creado)
+        {
+            await mostrarToastProgress("Completado", "El estudiante ha sido creado con exito");
+            navigationManager.NavigateTo("/Estudiantes/Index");
+        }
+        else
+            await mostrarToastProgress("Error", "Error guardar el estudiante");
+    }
+    async Task mostrarToastProgress(string titulo, string texto)
+    {
+        progress = 100;
+        toastEsVisible = true;
+        mensaje = toastService.ShowToast(titulo, texto);
 
-        navigationManager.NavigateTo("/Estudiantes/Index");
+        int duration = 3000;
+        int intervalTime = 30;
+        int steps = (int)duration / intervalTime;
+
+        for (int i = 0; i < steps; i++)
+        {
+            await Task.Delay(intervalTime);
+            progress -= 100.0 / steps;
+            StateHasChanged();
+        }
+        toastEsVisible = false;
+        StateHasChanged();
     }
 }
