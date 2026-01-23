@@ -72,6 +72,7 @@
             ListaEstudiantes = await estudiantesService.Listar(criterio: p => p.EstudianteId > 0);
         }catch(Exception ex)
         {
+            Console.WriteLine(ex.Message);
             navigationManager.NavigateTo("/Error");
         }
     }

@@ -7,6 +7,7 @@
     <RootNamespace>Registro_estudiantil___Tarea_1</RootNamespace>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+    <UserSecretsId>15de6f8d-e379-4b53-bdd4-0174ed4e8b3a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
