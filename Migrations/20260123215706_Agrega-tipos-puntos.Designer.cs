@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Registro_estudiantil___Tarea_1.DAL;
 
@@ -10,9 +11,11 @@ using Registro_estudiantil___Tarea_1.DAL;
 namespace Registro_estudiantil___Tarea_1.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20260123215706_Agrega-tipos-puntos")]
+    partial class Agregatipospuntos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

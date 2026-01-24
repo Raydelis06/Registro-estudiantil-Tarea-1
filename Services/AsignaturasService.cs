@@ -65,7 +65,7 @@ namespace Registro_estudiantil___Tarea_1.Services
         public async Task<bool> Eliminar(int asignaturaId)
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
-            var estudiante = await contexto.Estudiantes.FindAsync(asignaturaId);
+            var asignatura = await contexto.Asignaturas.FindAsync(asignaturaId);
             return await contexto.Asignaturas.AsNoTracking().Where(a => a.AsignaturaId == asignaturaId).ExecuteDeleteAsync() > 0;
         }
         //Metodo listar

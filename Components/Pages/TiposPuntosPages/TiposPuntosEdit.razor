@@ -1,50 +1,35 @@
-﻿@page "/Asignaturas/Index/Edit/{AsignaturaId:int}"
+﻿@page "/TiposDePuntos/Index/Edit/{TipoId:int}"
 
 @rendermode InteractiveServer
 
-@inject AsignaturasService asignaturasService
+@inject TiposPuntosService tiposPuntosService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 
-<PageTitle>Editar asignatura</PageTitle>
+<PageTitle>Editar tipo de punto</PageTitle>
 
 <div class="container w-75 mt-4">
     <div class="card shadow-lg border-0">
         <div class="card-header d-flex justify-content-between align-items-center bg-light">
-            <h5 class="card-title">Editar informacion de la asignatura</h5>
+            <h5 class="card-title">Editar informacion del tipo de punto</h5>
         </div>
 
-        <EditForm Model="@asignatura" OnValidSubmit="Editar">
+        <EditForm Model="@tipoPunto" OnValidSubmit="Editar">
             <DataAnnotationsValidator />
             <div class="card-body d-flex flex-column gap-3">
                 <div class="justify-content-start">
                     <label>Nombre: </label>
-                    <InputText class="form-control" @bind-Value="asignatura.Nombre"
+                    <InputText class="form-control" @bind-Value="tipoPunto.Nombre"
                                placeholder="nombreActual" />
-                    <ValidationMessage For="@(() => asignatura.Nombre)" />
+                    <ValidationMessage For="@(() => tipoPunto.Nombre)" />
                 </div>
                 <div class="justify-content-start">
-                    <label>Codigo: </label>
+                    <label>Descripcion: </label>
                     <InputText class="form-control"
-                               @bind-Value="asignatura.Codigo"
-                               placeholder="codigoActual" />
-                    <ValidationMessage For="@(() => asignatura.Codigo)" />
+                               @bind-Value="tipoPunto.Descripcion"
+                               placeholder="descripcionActual" />
+                    <ValidationMessage For="@(() => tipoPunto.Descripcion)" />
                 </div>
-                <div class="justify-content-start">
-                    <label>Aula: </label>
-                    <InputText class="form-control"
-                               @bind-Value="asignatura.Aula"
-                               placeholder="aulaActual" />
-                    <ValidationMessage For="@(() => asignatura.Aula)" />
-                </div>
-                <div class="justify-content-start">
-                    <label>Cantidad de creditos: </label>
-                    <InputNumber class="form-control"
-                                 @bind-Value="asignatura.Creditos"
-                                 placeholder="creditosActuales" />
-                    <ValidationMessage For="@(() => asignatura.Creditos)" />
-                </div>
-
             </div>
             <div class="card-footer d-flex justify-content-center gap-2">
                 <a href="/Estudiantes/Index" class="btn btn-secondary">
@@ -64,7 +49,7 @@
                 <h5 class="modal-title">Alerta de confirmacion</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body"> ¿Esta seguro que desa eliminar la asignatura? </div>
+            <div class="modal-body"> ¿Esta seguro que desa eliminar el tipo de punto? </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary bi bi-x" data-bs-dismiss="modal"> Cancelar </button>
                 <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar"> Eliminar </button>
@@ -91,13 +76,11 @@
 }
 @code {
     [Parameter]
-    public int AsignaturaId { get; set; }
+    public int TipoId { get; set; }
 
-    Asignaturas asignatura = new();
+    TiposPuntos tipoPunto = new();
     string nombreActual = string.Empty;
-    string codigoActual = string.Empty;
-    string aulaActual = string.Empty;
-    int creditosActuales;
+    string descripcionActual = string.Empty;
     
     ToastMessage mensaje = new ToastMessage();
     bool toastEsVisible = false;
@@ -105,33 +88,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        asignatura = await asignaturasService.Buscar(AsignaturaId);
-        if (asignatura != null)
+        tipoPunto = await tiposPuntosService.Buscar(TipoId);
+        if (tipoPunto != null)
         {
-            nombreActual = asignatura.Nombre;
-            codigoActual = asignatura.Codigo;
-            aulaActual = asignatura.Aula;
-            creditosActuales = asignatura.Creditos;
+            nombreActual = tipoPunto.Nombre;
+            descripcionActual = tipoPunto.Descripcion;
         }
     }
     async Task Editar()
     {
-        var modificado = await asignaturasService.Modificar(asignatura);
+        var modificado = await tiposPuntosService.Modificar(tipoPunto);
         if (modificado){
-            await mostrarToastProgress("Completado", "La asignatura ha sido editada con exito");
-            navigationManager.NavigateTo("/Asignaturas/Index");
+            await mostrarToastProgress("Completado", "El tipo de punto ha sido editado con exito");
+            navigationManager.NavigateTo("/TiposDePuntos/Index");
         }else
-            await mostrarToastProgress("Error", "Error al modificar la asignatura");
+            await mostrarToastProgress("Error", "Error al modificar el tipo de punto");
     }
     async Task Eliminar()
     {
-        var eliminado = await asignaturasService.Eliminar(asignatura.AsignaturaId);
+        var eliminado = await tiposPuntosService.Eliminar(tipoPunto.TipoId);
         if(eliminado){
-            await mostrarToastProgress("Completado", "La asignatura ha sido eliminada con exito");
-            navigationManager.NavigateTo("/Asignaturas/Index");
+            await mostrarToastProgress("Completado", "El tipo de punto ha sido eliminado con exito");
+            navigationManager.NavigateTo("/TiposDePuntos/Index");
         }
         else
-            await mostrarToastProgress("Error", "Error al eliminar la asignatura");
+            await mostrarToastProgress("Error", "Error al eliminar el tipo de punto");
     }
     async Task mostrarToastProgress(string titulo, string texto)
     {
