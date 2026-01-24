@@ -1,0 +1,99 @@
+﻿@page "/TiposDePuntos/Index/Create"
+
+@rendermode InteractiveServer
+
+@inject TiposPuntosService tiposPuntosService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+
+<PageTitle>Crear tipo punto</PageTitle>
+
+
+<div class="container w-75 mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+            <h5 class="card-title">Crear nuevo tipo de punto</h5>
+        </div>
+        <EditForm Model="@tipoPunto" OnValidSubmit="Crear">
+            <DataAnnotationsValidator />
+            <div class="card-body d-flex flex-column gap-3 ">
+                <div class="justify-content-start">
+                    <label>Nombre: </label>
+                    <InputText class="form-control " @bind-Value="tipoPunto.Nombre"
+                               placeholder="Ingrese el nombre para el tipo de punto..." />
+                    <ValidationMessage For="@(() => tipoPunto.Nombre)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Descripcion: </label>
+                    <InputText class="form-control"
+                               @bind-Value="tipoPunto.Descripcion"
+                               placeholder="Ingrese una descripcion breve..." />
+                    <ValidationMessage For="@(() => tipoPunto.Descripcion)" />
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-center gap-2">
+                <a href="/Asignaturas/Index" class="btn btn-secondary">
+                    <span class="bi bi-arrow-left me-2"></span> Volver
+                </a>
+                <button type="submit" class="btn btn-primary bi bi-save me-2"> Guardar </button>
+            </div>
+        </EditForm>
+
+    </div>
+</div>
+@* Notificacion sucess/error *@
+@if (toastEsVisible)
+{
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div class="toast show text-bg-@mensaje.Type.ToString().ToLower()" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">@mensaje.Title</strong>
+            </div>
+            <div class="toast-body">
+                @mensaje.Message
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-success" id="progressBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@code {
+
+    TiposPuntos tipoPunto = new TiposPuntos();
+    ToastMessage mensaje = new ToastMessage();
+    bool toastEsVisible = false;
+    private double progress;
+
+    private async Task Crear()
+    {
+        var creada = await tiposPuntosService.Guardar(tipoPunto);
+        if (creada)
+        {
+            await mostrarToastProgress("Completado", "El tipo de punto ha sido creado con exito");
+            navigationManager.NavigateTo("/TiposDePuntos/Index");
+        }
+        else
+            await mostrarToastProgress("Error", "Ya existe un tipo de punto con este nombre");
+    }
+    async Task mostrarToastProgress(string titulo, string texto)
+    {
+        progress = 100;
+        toastEsVisible = true;
+        mensaje = toastService.ShowToast(titulo, texto);
+
+        int duration = 3000;
+        int intervalTime = 30;
+        int steps = (int)duration / intervalTime;
+
+        for (int i = 0; i < steps; i++)
+        {
+            await Task.Delay(intervalTime);
+            progress -= 100.0 / steps;
+            StateHasChanged();
+        }
+        toastEsVisible = false;
+        StateHasChanged();
+    }
+}
+

@@ -1,0 +1,93 @@
+﻿@page "/TiposDePuntos/Index"
+
+@rendermode InteractiveServer
+
+@inject TiposPuntosService tiposPuntosService
+@inject NavigationManager navigationManager
+
+<PageTitle>Registro de tipos de puntos</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between align-items-center bg-light">
+            <h5 class="card-title">Registro de tipos de puntos</h5>
+            <div class="d-flex align-items-center gap-2">
+                <InputText id="inputFiltro" class="form-control"
+                           @bind-Value="ValorFiltro"
+                           placeholder="Filtro de búsqueda..." />
+
+                <button class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                <a href="/TiposDepuntos/Index/Create" class="btn btn-primary">
+                    <span class="bi bi-plus-square "></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Descripcion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tipoPunto in ListaTiposPuntos)
+                    {
+                        <tr>
+                            <td class="text-muted">@tipoPunto.TipoId</td>
+                            <td class="text-muted">@tipoPunto.Nombre</td>
+                            <td class="text-muted">@tipoPunto.Descripcion</td>
+                            <td>
+                                <a href="@($"/TiposDePuntos/Index/Edit/{tipoPunto.TipoId}")" class="btn btn-sm btn-outline-primary">
+                                    <span class="bi bi-pencil-square"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="card-footer d-flex space-between ">
+            <label>Cantidad: @ListaTiposPuntos.Count</label>
+        </div>
+    </div>
+</div>
+@code {
+
+    public List<TiposPuntos> ListaTiposPuntos { get; set; } = new List<TiposPuntos>();
+
+    public string ValorFiltro { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            ListaTiposPuntos = await tiposPuntosService.Listar(criterio: p => p.TipoId > 0);
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            navigationManager.NavigateTo("/Error");
+        }
+    }
+
+    private async Task Buscar()
+    {
+        if (ValorFiltro.Trim() != "")
+        {
+            ListaTiposPuntos = await tiposPuntosService.Listar(
+                criterio: p => p.Nombre.ToLower()
+                    .Contains(ValorFiltro.ToLower()));
+
+        }
+        else
+        {
+            ListaTiposPuntos = await tiposPuntosService.Listar(
+                criterio: p => p.TipoId > 0);
+        }
+    }
+}
