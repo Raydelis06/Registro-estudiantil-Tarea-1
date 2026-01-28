@@ -1,3 +1,4 @@
+using BlazorBootstrap;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,7 +19,8 @@ var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 //Inyectar el contexto
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 //Inyectar el servicio
-builder.Services.AddScoped<EstudianteService>();
+builder.Services.AddScoped<EstudiantesService>();
+builder.Services.AddScoped<AsignaturasService>();
 //Agrega bootstrap
 builder.Services.AddBlazorBootstrap();
 var app = builder.Build();

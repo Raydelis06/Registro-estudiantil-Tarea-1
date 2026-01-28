@@ -10,5 +10,6 @@ namespace Registro_estudiantil___Tarea_1.DAL
         }
 
         public DbSet<Estudiantes> Estudiantes { get; set; }
+        public DbSet<Asignaturas> Asignaturas { get; set; }
     }
 }

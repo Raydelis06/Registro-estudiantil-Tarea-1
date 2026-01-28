@@ -5,6 +5,23 @@ html, body {
 a, .btn-link {
     color: #006bb7;
 }
+label {
+    font-weight: bold;
+}
+#progressBar {
+    width: 100%;
+    animation: toast-progress 3s linear forwards;
+}
+
+@keyframes toast-progress {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
 
 .btn-primary {
     color: #fff;

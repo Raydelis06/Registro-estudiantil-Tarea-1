@@ -1,12 +1,12 @@
-﻿@page "/Estudiantes/Index/Edit/{Id:int}"
+﻿@page "/Asignaturas/Index/Edit/{AsignaturaId:int}"
 
 @rendermode InteractiveServer
 
-@inject EstudiantesService estudiantesService
+@inject AsignaturasService asignaturasService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 
-<PageTitle>Editar informacion del estudiante</PageTitle>
+<PageTitle>Editar informacion de la asignatura</PageTitle>
 
 <div class="container w-75 mt-4">
     <div class="card shadow-lg border-0">
@@ -14,41 +14,48 @@
             <h5 class="card-title">Editar informacion del estudiante</h5>
         </div>
 
-        <EditForm Model="@estudiante" OnValidSubmit="Editar">
+        <EditForm Model="@asignatura" OnValidSubmit="Editar">
             <DataAnnotationsValidator />
             <div class="card-body d-flex flex-column gap-3">
                 <div class="justify-content-start">
-                    <label>Nombre completo: </label>
-                    <InputText id="inputNombre" class="form-control" 
-                               @bind-Value="estudiante.Nombres"
-                               placeholder="Ingrese el nuevo nombre..." />
-                    <ValidationMessage For="@(() => estudiante.Nombres)" />
-                </div>
-                <div class ="justify-content-start" >
-                    <label>Correo electronico: </label>
-                    <InputText id="inputEmail" class="form-control" 
-                               @bind-Value="estudiante.Email"
-                               placeholder="Ingrese la nueva direccion de correo..." />
-                    <ValidationMessage For="@(() => estudiante.Email)" />
+                    <label>Nombre: </label>
+                    <InputText class="form-control" @bind-Value="asignatura.Nombre"
+                               placeholder="nombreActual" />
+                    <ValidationMessage For="@(() => asignatura.Nombre)" />
                 </div>
                 <div class="justify-content-start">
-                    <label >Edad: </label>
-                    <InputNumber step="1" id="inputEdad" class="form-control" 
-                                 @bind-Value="estudiante.Edad"
-                                 placeholder="Ingrese la edad actual del estudiante..." />
-                    <ValidationMessage For="@(() => estudiante.Edad)" />
+                    <label>Codigo: </label>
+                    <InputText class="form-control"
+                               @bind-Value="asignatura.Codigo"
+                               placeholder="codigoActual" />
+                    <ValidationMessage For="@(() => asignatura.Codigo)" />
                 </div>
+                <div class="justify-content-start">
+                    <label>Aula: </label>
+                    <InputText class="form-control"
+                               @bind-Value="asignatura.Aula"
+                               placeholder="aulaActual" />
+                    <ValidationMessage For="@(() => asignatura.Aula)" />
+                </div>
+                <div class="justify-content-start">
+                    <label>Cantidad de creditos: </label>
+                    <InputNumber class="form-control"
+                                 @bind-Value="asignatura.Creditos"
+                                 placeholder="creditosActuales" />
+                    <ValidationMessage For="@(() => asignatura.Creditos)" />
+                </div>
+
             </div>
             <div class="card-footer d-flex justify-content-center gap-2">
                 <a href="/Estudiantes/Index" class="btn btn-secondary">
                     <span class="bi bi-arrow-left me-2"></span> Volver
                 </a>
-                <button type="submit" class="btn btn-primary bi bi-save me-2" @onclick="Editar"> Modificar </button>
+                <button type="submit" class="btn btn-primary bi bi-save me-2"> Modificar </button>
                 <button type="button" class="btn btn-danger bi bi-trash me-2" data-bs-toggle="modal" data-bs-target="#modalConfirm"> Eliminar </button>
             </div>
         </EditForm>
     </div>
-</div> 
+</div>
 @* Modulo de confirmacion *@
 <div class="modal fade" id="modalConfirm" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
@@ -57,7 +64,7 @@
                 <h5 class="modal-title">Alerta de confirmacion</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body"> ¿Esta seguro que desa eliminar el estudiante? </div>
+            <div class="modal-body"> ¿Esta seguro que desa eliminar la asignatura? </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary bi bi-x" data-bs-dismiss="modal"> Cancelar </button>
                 <button type="button" class="btn btn-danger bi bi-trash me-2" @onclick="Eliminar"> Eliminar </button>
@@ -82,45 +89,49 @@
         </div>
     </div>
 }
-
 @code {
     [Parameter]
-    public int Id { get; set; }
+    public int AsignaturaId { get; set; }
 
-    Estudiantes estudiante = new();
+    Asignaturas asignatura = new();
     string nombreActual = string.Empty;
-    string emailActual = string.Empty;
-    int edadActual;
+    string codigoActual = string.Empty;
+    string aulaActual = string.Empty;
+    int creditosActuales;
+    
     ToastMessage mensaje = new ToastMessage();
     bool toastEsVisible = false;
     private double progress;
 
     protected override async Task OnInitializedAsync()
     {
-        estudiante = await estudiantesService.Buscar(Id);
-        if (estudiante != null)
+        asignatura = await asignaturasService.Buscar(AsignaturaId);
+        if (asignatura != null)
         {
-            nombreActual = estudiante.Nombres;
-            emailActual = estudiante.Email;
-            edadActual = estudiante.Edad!.Value;
+            nombreActual = asignatura.Nombre;
+            codigoActual = asignatura.Codigo;
+            aulaActual = asignatura.Aula;
+            creditosActuales = asignatura.Creditos;
         }
-
     }
-
     async Task Editar()
     {
-        var modificado = await estudiantesService.Modificar(estudiante);
-        if (modificado)
-            await mostrarToastProgress("Completado", "El estudiante ha sido editado con exito");
-        else
-            await mostrarToastProgress("Error", "Error al modificar el estudiante.");
-        navigationManager.NavigateTo("/Estudiantes/Index");
+        var modificado = await asignaturasService.Modificar(asignatura);
+        if (modificado){
+            await mostrarToastProgress("Completado", "La asignatura ha sido editada con exito");
+            navigationManager.NavigateTo("/Asignaturas/Index");
+        }else
+            await mostrarToastProgress("Error", "Error al modificar la asignatura");
     }
     async Task Eliminar()
     {
-        await estudiantesService.Eliminar(estudiante.EstudianteId);
-        await mostrarToastProgress("Completado", "El estudiante ha sido eliminado con exito");
-        navigationManager.NavigateTo("/Estudiantes/Index");
+        var eliminado = await asignaturasService.Eliminar(asignatura.AsignaturaId);
+        if(eliminado){
+            await mostrarToastProgress("Completado", "La asignatura ha sido eliminada con exito");
+            navigationManager.NavigateTo("/Asignaturas/Index");
+        }
+        else
+            await mostrarToastProgress("Error", "Error al eliminar la asignatura");
     }
     async Task mostrarToastProgress(string titulo, string texto)
     {
